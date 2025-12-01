@@ -12,6 +12,7 @@ import {
   Users,
   MoreHorizontal,
 } from "lucide-react";
+import "./CalendarView.css";
 
 interface CalendarViewProps {
   onBack: () => void;
@@ -181,35 +182,32 @@ export default function CalendarView({ onBack }: CalendarViewProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-blue-50">
-      <div className="p-8 space-y-6">
+    <div className="calendar-view-container">
+      <div className="calendar-content">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="calendar-header">
           <div>
-            <button
-              onClick={onBack}
-              className="text-sm text-slate-600 hover:text-indigo-600 transition-colors mb-3"
-            >
+            <button onClick={onBack} className="back-button">
               ← 대시보드로 돌아가기
             </button>
-            <h1 className="text-3xl text-slate-900">캘린더</h1>
+            <h1 className="page-title">캘린더</h1>
           </div>
-          <div className="flex items-center gap-3">
-            <Button variant="outline" className="gap-2">
+          <div className="header-actions">
+            <Button variant="outline" className="filter-button">
               <Filter className="w-4 h-4" />
               필터
             </Button>
-            <Button className="gap-2 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white shadow-lg shadow-indigo-500/30">
+            <Button className="new-event-button">
               <Plus className="w-4 h-4" />새 일정 만들기
             </Button>
           </div>
         </div>
 
         {/* Calendar Controls */}
-        <div className="glass-card rounded-2xl p-6">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
+        <div className="calendar-card">
+          <div className="controls-header">
+            <div className="date-navigation">
+              <div className="nav-buttons">
                 <Button
                   variant="ghost"
                   size="sm"
@@ -217,7 +215,7 @@ export default function CalendarView({ onBack }: CalendarViewProps) {
                 >
                   <ChevronLeft className="w-5 h-5" />
                 </Button>
-                <h2 className="text-xl text-slate-900 min-w-[180px] text-center">
+                <h2 className="current-date-display">
                   {currentDate.getFullYear()}년{" "}
                   {monthNames[currentDate.getMonth()]}
                 </h2>
@@ -238,16 +236,12 @@ export default function CalendarView({ onBack }: CalendarViewProps) {
               </Button>
             </div>
 
-            <div className="flex gap-2">
+            <div className="view-mode-toggle">
               <Button
                 variant={viewMode === "month" ? "default" : "outline"}
                 size="sm"
                 onClick={() => setViewMode("month")}
-                className={
-                  viewMode === "month"
-                    ? "bg-gradient-to-r from-indigo-600 to-blue-600 text-white"
-                    : ""
-                }
+                className={viewMode === "month" ? "view-mode-btn-active" : ""}
               >
                 월간
               </Button>
@@ -255,11 +249,7 @@ export default function CalendarView({ onBack }: CalendarViewProps) {
                 variant={viewMode === "week" ? "default" : "outline"}
                 size="sm"
                 onClick={() => setViewMode("week")}
-                className={
-                  viewMode === "week"
-                    ? "bg-gradient-to-r from-indigo-600 to-blue-600 text-white"
-                    : ""
-                }
+                className={viewMode === "week" ? "view-mode-btn-active" : ""}
               >
                 주간
               </Button>
@@ -269,66 +259,57 @@ export default function CalendarView({ onBack }: CalendarViewProps) {
           {/* Month View */}
           {viewMode === "month" && (
             <div>
-              <div className="grid grid-cols-7 gap-2 mb-2">
+              <div className="weekdays-grid">
                 {weekDays.map((day, index) => (
-                  <div
-                    key={index}
-                    className="text-center p-3 text-sm text-slate-600"
-                  >
+                  <div key={index} className="weekday-label">
                     {day}
                   </div>
                 ))}
               </div>
 
-              <div className="grid grid-cols-7 gap-2">
+              <div className="days-grid">
                 {days.map((day, index) => (
                   <div
                     key={index}
-                    className={`min-h-[120px] p-3 rounded-xl transition-all ${
-                      day === null
-                        ? "bg-transparent"
-                        : isToday(day)
-                        ? "bg-gradient-to-br from-indigo-100 to-blue-100 border-2 border-indigo-300"
-                        : "bg-white hover:shadow-md hover:border-indigo-200 border border-slate-100"
+                    className={`day-cell ${
+                      day === null ? "empty" : isToday(day) ? "today" : "normal"
                     }`}
                   >
                     {day !== null && (
                       <>
-                        <div className="flex items-center justify-between mb-2">
+                        <div className="day-header">
                           <span
-                            className={`text-sm ${
-                              isToday(day)
-                                ? "w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center"
-                                : "text-slate-900"
+                            className={`day-number ${
+                              isToday(day) ? "today" : "normal"
                             }`}
                           >
                             {day}
                           </span>
                         </div>
-                        <div className="space-y-1">
+                        <div className="events-stack">
                           {getEventsForDay(day)
                             .slice(0, 2)
                             .map((event) => (
                               <div
                                 key={event.id}
-                                className={`p-2 rounded-lg bg-${event.color}-50 border border-${event.color}-200 cursor-pointer hover:shadow-sm transition-all group`}
+                                className={`event-item bg-${event.color}-50 border-${event.color}-200 group`}
                               >
-                                <div className="flex items-start justify-between gap-1">
+                                <div className="event-title-row">
                                   <p
-                                    className={`text-xs text-${event.color}-900 line-clamp-1`}
+                                    className={`event-title text-${event.color}-900`}
                                   >
                                     {event.title}
                                   </p>
                                 </div>
                                 <p
-                                  className={`text-xs text-${event.color}-700 mt-0.5`}
+                                  className={`event-time text-${event.color}-700`}
                                 >
                                   {event.time}
                                 </p>
                               </div>
                             ))}
                           {getEventsForDay(day).length > 2 && (
-                            <button className="text-xs text-indigo-600 hover:text-indigo-700 w-full text-left pl-2">
+                            <button className="more-events-btn">
                               +{getEventsForDay(day).length - 2}개 더보기
                             </button>
                           )}
@@ -344,21 +325,21 @@ export default function CalendarView({ onBack }: CalendarViewProps) {
           {/* Week View */}
           {viewMode === "week" && (
             <div>
-              <div className="grid grid-cols-8 gap-2 mb-2">
-                <div className="text-center p-3 text-sm text-slate-600"></div>
+              <div className="week-header-grid">
+                <div className="time-column-header"></div>
                 {weekDaysList.map((day, index) => (
                   <div
                     key={index}
-                    className={`text-center p-3 rounded-xl ${
-                      isToday(day)
-                        ? "bg-gradient-to-br from-indigo-600 to-blue-600 text-white"
-                        : "text-slate-600"
+                    className={`week-day-header ${
+                      isToday(day) ? "today" : "normal"
                     }`}
                   >
-                    <div className="text-xs mb-1">{weekDays[day.getDay()]}</div>
+                    <div className="week-day-name">
+                      {weekDays[day.getDay()]}
+                    </div>
                     <div
-                      className={`text-lg ${
-                        isToday(day) ? "text-white" : "text-slate-900"
+                      className={`week-day-date ${
+                        isToday(day) ? "text-white" : "normal"
                       }`}
                     >
                       {day.getDate()}
@@ -367,41 +348,38 @@ export default function CalendarView({ onBack }: CalendarViewProps) {
                 ))}
               </div>
 
-              <div className="grid grid-cols-8 gap-2">
-                <div className="space-y-16 pt-2">
+              <div className="week-grid">
+                <div className="time-labels">
                   {[...Array(12)].map((_, i) => (
-                    <div
-                      key={i}
-                      className="text-xs text-slate-500 text-right pr-2"
-                    >
+                    <div key={i} className="time-label">
                       {i + 8}:00
                     </div>
                   ))}
                 </div>
 
                 {weekDaysList.map((day, dayIndex) => (
-                  <div key={dayIndex} className="relative">
-                    <div className="space-y-1">
+                  <div key={dayIndex} className="day-column">
+                    <div className="day-events-container">
                       {getEventsForDay(day).map((event, eventIndex) => {
                         const hour = parseInt(event.time.split(":")[0]);
                         const topPosition = (hour - 8) * 4;
                         return (
                           <div
                             key={event.id}
-                            className={`absolute left-0 right-0 p-3 rounded-xl bg-${event.color}-50 border-l-4 border-${event.color}-500 cursor-pointer hover:shadow-lg transition-all z-10`}
+                            className={`week-event-card bg-${event.color}-50 border-${event.color}-500`}
                             style={{
                               top: `${topPosition}rem`,
                             }}
                           >
                             <h4
-                              className={`text-sm text-${event.color}-900 mb-1 line-clamp-1`}
+                              className={`week-event-title text-${event.color}-900`}
                             >
                               {event.title}
                             </h4>
                             <div
-                              className={`flex items-center gap-2 text-xs text-${event.color}-700`}
+                              className={`week-event-details text-${event.color}-700`}
                             >
-                              <span className="flex items-center gap-1">
+                              <span className="week-event-time">
                                 <Clock className="w-3 h-3" />
                                 {event.time}
                               </span>
@@ -412,12 +390,9 @@ export default function CalendarView({ onBack }: CalendarViewProps) {
                         );
                       })}
                     </div>
-                    <div className="space-y-16 opacity-20">
+                    <div className="time-grid-lines">
                       {[...Array(12)].map((_, i) => (
-                        <div
-                          key={i}
-                          className="border-t border-slate-200 h-16"
-                        ></div>
+                        <div key={i} className="grid-line"></div>
                       ))}
                     </div>
                   </div>
@@ -428,41 +403,36 @@ export default function CalendarView({ onBack }: CalendarViewProps) {
         </div>
 
         {/* Upcoming Events List */}
-        <div className="glass-card rounded-2xl p-6">
-          <h2 className="text-xl text-slate-900 mb-4">다가오는 일정</h2>
-          <div className="space-y-3">
+        <div className="calendar-card upcoming-section">
+          <h2 className="section-title">다가오는 일정</h2>
+          <div className="upcoming-list">
             {events.slice(0, 4).map((event) => (
-              <div
-                key={event.id}
-                className="flex items-center gap-4 p-4 rounded-xl bg-white border border-slate-100 hover:border-indigo-200 hover:shadow-md transition-all cursor-pointer"
-              >
-                <div
-                  className={`w-12 h-12 rounded-xl bg-${event.color}-100 flex items-center justify-center flex-shrink-0`}
-                >
+              <div key={event.id} className="upcoming-event-card">
+                <div className={`event-icon-box bg-${event.color}-100`}>
                   <Calendar className={`w-6 h-6 text-${event.color}-600`} />
                 </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-slate-900 mb-1">{event.title}</h3>
-                  <div className="flex items-center gap-3 text-sm text-slate-600">
-                    <span className="flex items-center gap-1">
+                <div className="event-info">
+                  <h3 className="upcoming-event-title">{event.title}</h3>
+                  <div className="upcoming-event-meta">
+                    <span className="meta-item">
                       <Clock className="w-4 h-4" />
                       {event.time} ({event.duration})
                     </span>
                     <span>•</span>
-                    <span className="flex items-center gap-1">
+                    <span className="meta-item">
                       <MapPin className="w-4 h-4" />
                       {event.location}
                     </span>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="event-actions">
                   <Badge
                     variant="outline"
-                    className={`bg-${event.color}-50 text-${event.color}-700 border-${event.color}-200`}
+                    className={`team-badge bg-${event.color}-50 text-${event.color}-700 border-${event.color}-200`}
                   >
                     {event.team}
                   </Badge>
-                  <div className="flex items-center gap-1 text-sm text-slate-600">
+                  <div className="attendees-count">
                     <Users className="w-4 h-4" />
                     {event.attendees}
                   </div>
@@ -476,9 +446,9 @@ export default function CalendarView({ onBack }: CalendarViewProps) {
         </div>
 
         {/* Legend */}
-        <div className="glass-card rounded-2xl p-6">
-          <h3 className="text-slate-900 mb-4">팀별 색상</h3>
-          <div className="flex flex-wrap gap-3">
+        <div className="calendar-card legend-section">
+          <h3 className="section-title">팀별 색상</h3>
+          <div className="legend-grid">
             {[
               { name: "개발팀", color: "indigo" },
               { name: "디자인팀", color: "blue" },
@@ -487,14 +457,9 @@ export default function CalendarView({ onBack }: CalendarViewProps) {
               { name: "전체", color: "orange" },
               { name: "개인", color: "green" },
             ].map((team) => (
-              <div
-                key={team.name}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white border border-slate-100"
-              >
-                <div
-                  className={`w-3 h-3 rounded-full bg-${team.color}-500`}
-                ></div>
-                <span className="text-sm text-slate-900">{team.name}</span>
+              <div key={team.name} className="legend-item">
+                <div className={`legend-color bg-${team.color}-500`}></div>
+                <span className="legend-label">{team.name}</span>
               </div>
             ))}
           </div>
