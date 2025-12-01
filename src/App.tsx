@@ -6,6 +6,7 @@ import ChatRoom from "./components/ChatRoom";
 import CalendarView from "./components/CalendarView";
 import MeetingSummary from "./components/MeetingSummary";
 import ScheduleModal from "./components/ScheduleModal";
+import CreateScheduleModal from "./components/CreateScheduleModal";
 import SettingsPage from "./components/setting";
 
 export type View =
@@ -20,6 +21,8 @@ export type View =
 export default function App() {
   const [currentView, setCurrentView] = useState<View>("auth");
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
+  const [isCreateScheduleModalOpen, setIsCreateScheduleModalOpen] =
+    useState(false);
 
   const handleLogin = () => {
     setCurrentView("dashboard");
@@ -35,6 +38,14 @@ export default function App() {
 
   const handleCloseScheduleModal = () => {
     setIsScheduleModalOpen(false);
+  };
+
+  const handleOpenCreateScheduleModal = () => {
+    setIsCreateScheduleModalOpen(true);
+  };
+
+  const handleCloseCreateScheduleModal = () => {
+    setIsCreateScheduleModalOpen(false);
   };
 
   const handleSaveSchedule = () => {
@@ -56,7 +67,10 @@ export default function App() {
         />
       )}
       {currentView === "calendar" && (
-        <CalendarView onBack={() => handleNavigate("dashboard")} />
+        <CalendarView
+          onBack={() => handleNavigate("dashboard")}
+          onOpenCreateScheduleModal={handleOpenCreateScheduleModal}
+        />
       )}
       {currentView === "summary" && (
         <MeetingSummary onBack={() => handleNavigate("dashboard")} />
@@ -66,6 +80,12 @@ export default function App() {
       <ScheduleModal
         isOpen={isScheduleModalOpen}
         onClose={handleCloseScheduleModal}
+        onSave={handleSaveSchedule}
+      />
+
+      <CreateScheduleModal
+        isOpen={isCreateScheduleModalOpen}
+        onClose={handleCloseCreateScheduleModal}
         onSave={handleSaveSchedule}
       />
     </>

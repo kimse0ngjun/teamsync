@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { Badge } from "./ui/badge";
@@ -24,8 +23,6 @@ interface DashboardProps {
 }
 
 export default function Dashboard({ onNavigate }: DashboardProps) {
-  const [activeTeam, setActiveTeam] = useState("전체");
-
   const upcomingEvents = [
     {
       id: 1,
@@ -190,7 +187,10 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
 
         {/* Settings */}
         <div className="!mt-auto pt-4 border-t border-slate-200/50">
-          <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/50 text-slate-700 transition-colors">
+          <button
+            onClick={() => onNavigate("settings")}
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/50 text-slate-700 transition-colors"
+          >
             <Settings className="w-5 h-5" />
             <span>설정</span>
           </button>

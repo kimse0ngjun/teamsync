@@ -4,15 +4,7 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Switch } from "./ui/switch";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import {
-  User,
-  Bell,
-  Shield,
-  Palette,
-  Camera,
-  LogOut,
-  ChevronRight,
-} from "lucide-react";
+import { User, Bell, Shield, Palette, Camera, LogOut } from "lucide-react";
 import "./setting.css";
 
 export default function SettingsPage() {
