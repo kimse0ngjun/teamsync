@@ -6,6 +6,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import teamsync.backend.entity.enums.UserRole;
 
 import java.security.Key;
 import java.util.Date;
@@ -22,10 +23,11 @@ public class JwtTokenProvider {
     }
 
     // Access Token 생성
-    public String createAccessToken(String userId, String email) {
+    public String createAccessToken(String userId, String email, UserRole role) {
         return Jwts.builder()
                 .setSubject(userId)
                 .claim("email", email)
+                .claim("role", role.name())
                 .setExpiration(new Date(System.currentTimeMillis() + accessTokenValidity))
                 .signWith(key)
                 .compact();
@@ -72,6 +74,11 @@ public class JwtTokenProvider {
     public String getUserId(String token) {
         return parseClaims(token).getSubject();
     }
+    public String getRole(String token) {
+        return parseClaims(token).get("role", String.class);
+    }
+
+
 
     // 토큰 내 email 호출
     public String getEmail(String token) {

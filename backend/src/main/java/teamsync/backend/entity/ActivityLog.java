@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import teamsync.backend.entity.enums.DashboardType;
-
+import java.util.UUID;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 

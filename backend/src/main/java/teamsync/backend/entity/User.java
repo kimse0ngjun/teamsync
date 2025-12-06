@@ -2,7 +2,9 @@ package teamsync.backend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.UuidGenerator;
+import teamsync.backend.entity.enums.UserRole;
 
 import java.time.LocalDateTime;
 
@@ -30,6 +32,10 @@ public class User {
     private String name;
 
     private String image;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserRole role = UserRole.MEMBER;
 
     @Column(nullable = false)
     private LocalDateTime createAt;
