@@ -30,6 +30,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
 
+        String path = req.getRequestURI();
+        String method = req.getMethod();
+
+        if (path.startsWith("/api/auth/") ||
+                path.startsWith("/swagger-ui/") ||
+                path.startsWith("/v3/api-docs/") ||
+                path.startsWith("/health") ||
+                path.equals("/") ||
+                path.startsWith("/ws/") ||
+                path.startsWith("/api/user/") ||
+                (path.startsWith("/api/product/") && "GET".equals(method))) { // 예시로 남겨진 Product GET
+
+            filterChain.doFilter(req, res);
+            return;
+        }
+
         String token = resolveToken(req);
 
         if (token != null && jwtTokenProvider.validateToken(token)) {
