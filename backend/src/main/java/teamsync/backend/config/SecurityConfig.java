@@ -46,6 +46,7 @@ public class SecurityConfig {
                                 "/ws/**"
                         ).permitAll()
                         .requestMatchers("/api/user/**").permitAll()
+                        .requestMatchers("/api/organization/**").permitAll()
                         .requestMatchers("/api/teams/*/ownership/**").hasRole("OWNER")
                         .requestMatchers("/api/teams/{teamId}/members/**").hasAnyRole("OWNER", "ADMIN")
                         .requestMatchers("/api/teams/{teamId}/settings/**").hasAnyRole("OWNER", "ADMIN")
