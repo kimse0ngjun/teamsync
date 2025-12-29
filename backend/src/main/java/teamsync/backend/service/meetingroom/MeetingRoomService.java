@@ -3,16 +3,17 @@ package teamsync.backend.service.meetingroom;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import teamsync.backend.entity.MeetingRoom;
-import teamsync.backend.entity.MeetingRoomParticipant;
-import teamsync.backend.entity.Team;
-import teamsync.backend.entity.User;
+import teamsync.backend.dto.meetingroom.MeetingRoomUpdateRequest;
+import teamsync.backend.dto.organizationmember.OrganizationMemberResponse;
+import teamsync.backend.entity.*;
 import teamsync.backend.repository.meetingroom.MeetingRoomParticipantRepository;
 import teamsync.backend.repository.meetingroom.MeetingRoomRepository;
+import teamsync.backend.repository.organization.OrganizationMemberRepository;
 import teamsync.backend.repository.team.TeamRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +23,7 @@ public class MeetingRoomService {
     private final MeetingRoomRepository meetingRoomRepository;
     private final MeetingRoomParticipantRepository meetingParticipantRepository;
     private final TeamRepository teamRepository;
+    private final OrganizationMemberRepository organizationMemberRepository;
 
     // 회의방 생성
     @Transactional
@@ -50,14 +52,14 @@ public class MeetingRoomService {
         return room;
     }
 
-    // 팀 내 회의방 목록 조회
+    // 회의방 목록 조회
     public List<MeetingRoom> getRooms(String teamId) {
-        return meetingRoomRepository.findByTeamIdAndIsActiveTrue(teamId);
+        return meetingRoomRepository.findByTeamId(teamId);
     }
 
     // 회의방 수정 (제목 수정)
     @Transactional
-    public void updateRoom(Long roomId, User user, String title) {
+    public void updateRoom(Long roomId, User user, MeetingRoomUpdateRequest req) {
         MeetingRoom room = meetingRoomRepository.findById(roomId)
                 .orElseThrow(() -> new RuntimeException("회의방이 없습니다."));
 
@@ -65,7 +67,7 @@ public class MeetingRoomService {
             throw new RuntimeException("수정 권한이 없습니다.");
         }
 
-        room.setTitle(title);
+        room.setTitle(req.getTitle());
         room.setUpdatedAt(LocalDateTime.now());
     }
 
@@ -82,4 +84,5 @@ public class MeetingRoomService {
         room.setIsActive(false);
         room.setUpdatedAt(LocalDateTime.now());
     }
+
 }

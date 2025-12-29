@@ -10,6 +10,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import teamsync.backend.dto.meetingroom.MeetingRoomCreateRequest;
 import teamsync.backend.dto.meetingroom.MeetingRoomResponse;
+import teamsync.backend.dto.meetingroom.MeetingRoomUpdateRequest;
+import teamsync.backend.dto.organizationmember.OrganizationMemberResponse;
 import teamsync.backend.entity.MeetingRoom;
 import teamsync.backend.entity.User;
 import teamsync.backend.service.meetingroom.MeetingRoomService;
@@ -37,9 +39,9 @@ public class MeetingRoomController {
         return ResponseEntity.ok(room.getId());
     }
 
-    // 팀 내 회의방 목록 조회
-    @Operation(summary = "팀 내 회의방 목록 조회", description = "팀 내 회의방 목록을 조회합니다.", security = {@SecurityRequirement(name = "securityBearer")})
-    @GetMapping("/team/{teamId}")
+    // 회의방 목록 조회
+    @Operation(summary = "회의방 목록 조회", description = "회의방 목록을 조회합니다.", security = {@SecurityRequirement(name = "securityBearer")})
+    @GetMapping("/{teamId}")
     public List<MeetingRoomResponse> list(@PathVariable String teamId) {
         return meetingRoomService.getRooms(teamId)
                 .stream()
@@ -49,13 +51,13 @@ public class MeetingRoomController {
 
     // 회의방 수정(제목 수정)
     @Operation(summary = "회의방 제목 수정", description = "회의방의 제목을 수정합니다.", security = {@SecurityRequirement(name = "securityBearer")})
-    @PutMapping("/{roomId}")
+    @PutMapping("/{roomId}/title")
     public void update(
             @PathVariable Long roomId,
             @AuthenticationPrincipal User user,
-            @RequestBody String title
+            @RequestBody MeetingRoomUpdateRequest req
     ) {
-        meetingRoomService.updateRoom(roomId, user, title);
+        meetingRoomService.updateRoom(roomId, user, req);
     }
 
     // 회의방 삭제

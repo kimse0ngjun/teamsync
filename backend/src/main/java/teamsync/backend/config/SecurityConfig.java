@@ -49,6 +49,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/team/**").authenticated()
                         .requestMatchers("/api/organization/**").authenticated()
                         .requestMatchers("/api/meeting-rooms/**").authenticated()
+                        .requestMatchers("/api/meeting-rooms-participant/**").authenticated()
                         .requestMatchers("/api/team/{teamId}/owner/**").hasRole("OWNER")
                         .requestMatchers("/api/team/{teamId}/members/**").hasAnyRole("OWNER", "ADMIN")
                         .requestMatchers("/api/team/{teamId}/role/**").hasAnyRole("OWNER", "ADMIN")

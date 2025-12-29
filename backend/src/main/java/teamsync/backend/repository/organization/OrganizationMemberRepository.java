@@ -1,6 +1,8 @@
 package teamsync.backend.repository.organization;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import teamsync.backend.entity.Organization;
 import teamsync.backend.entity.Team;
 import teamsync.backend.entity.OrganizationMember;
@@ -13,7 +15,8 @@ public interface OrganizationMemberRepository extends CrudRepository<Organizatio
 
     List<OrganizationMember> findByUser(User user);
 
-    List<OrganizationMember> findByTeam(Team team);
+    @Query("select m from OrganizationMember m join Team t on m.team.id = t.id where t.id = m.team.id")
+    List<OrganizationMember> findByTeam(@Param("team_id") String teamId);
 
     void deleteAllByTeam(Team team);
 
